@@ -62,6 +62,19 @@ else
     echo "info: No carriage return characters found."
 fi
 
+# Lines to add to ovpn file
+IGNORE_IPV6_LINES='
+pull-filter ignore "ifconfig-ipv6"
+pull-filter ignore "route-ipv6"
+'
+# Check if the lines already exist, and add them if they don't
+if ! grep -q 'pull-filter ignore "ifconfig-ipv6"' "$OVPN_FILE"; then
+    echo "info: Adding IPV6 ignore lines to $OVPN_FILE"
+    echo "$IGNORE_IPV6_LINES" | tee -a "$OVPN_FILE"
+else
+    echo "info: IPV6 ignore lines already present in $OVPN_FILE"
+fi
+
 echo "info: Disabling IPv6 if not already disabled..."
 # Disable IPv6 if not already disabled
 grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf || echo net.ipv6.conf.all.disable_ipv6 = 1 >> /etc/sysctl.conf
