@@ -112,7 +112,7 @@ else
     echo "info: Ferm configuration already contains OpenVPN server access."
 fi
 if ! grep -q "# But only when using tun0." /etc/ferm/ferm.conf; then
-    awk '/mod owner uid-owner debian-tor ACCEPT;/{print "            # But only when using tun0." RS "            outerface tun0 mod owner uid-owner debian-tor ACCEPT;";next}1' /etc/ferm/ferm.conf >/tmp/ferm.conf && mv /tmp/ferm.conf /etc/ferm/ferm.conf
+    awk '/mod owner uid-owner debian-tor {;/{print "            # But only when using tun0." RS "            outerface tun0 mod owner uid-owner debian-tor {;";next}1' /etc/ferm/ferm.conf >/tmp/ferm.conf && mv /tmp/ferm.conf /etc/ferm/ferm.conf
     echo "info: Ferm configuration updated for tun0 interface."
 else
     echo "info: Ferm configuration already contains tun0 interface."
