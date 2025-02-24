@@ -64,7 +64,8 @@ fi
 
 echo "info: Disabling IPv6 if not already disabled..."
 # Disable IPv6 if not already disabled
-grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf || echo net.ipv6.conf.all.disable_ipv6 = 1 >> /etc/sysctl.conf 
+grep "net.ipv6.conf.all.disable_ipv6 = 1" /etc/sysctl.conf || echo net.ipv6.conf.all.disable_ipv6 = 1 >> /etc/sysctl.conf
+grep "net.ipv6.conf.default.disable_ipv6 = 1" /etc/sysctl.conf || echo net.ipv6.conf.default.disable_ipv6 = 1 >> /etc/sysctl.conf
 sysctl -p
 echo "info: IPv6 disabled."
 
@@ -105,7 +106,7 @@ fi
 echo "info: Updating ferm configuration..."
 # Update ferm configuration
 if ! grep -q "White-list access to Openvpnserver:port for user root" /etc/ferm/ferm.conf; then
-    awk '/Local resources/{print "            # White-list access to Openvpnserver:port for user root" RS "            daddr '"$vpnserver_ip"' proto udp dport 40138 {" RS "                    mod owner uid-owner root ACCEPT;" RS "            }"  RS RS $0;next}1' /etc/ferm/ferm.conf >/tmp/ferm.conf && mv /tmp/ferm.conf /etc/ferm/ferm.conf
+    awk '/Local resources/{print "            # White-list access to Openvpnserver:port for user root" RS "            daddr '"$vpnserver_ip"' proto '"$vpnserver_proto"' dport '"$vpnserver_port"' {" RS "                    mod owner uid-owner root ACCEPT;" RS "            }"  RS RS $0;next}1' /etc/ferm/ferm.conf >/tmp/ferm.conf && mv /tmp/ferm.conf /etc/ferm/ferm.conf
     echo "info: Ferm configuration updated for OpenVPN server access."
 else
     echo "info: Ferm configuration already contains OpenVPN server access."
